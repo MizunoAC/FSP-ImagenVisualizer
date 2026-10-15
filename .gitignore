@@ -1,0 +1,81 @@
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build results
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+out/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio generated files
+Generated\ Files/
+ipch/
+*.cache
+*.pdb
+*.ilk
+*.obj
+*.iobj
+*.pch
+*.sdf
+*.opensdf
+*.VC.db
+*.VC.VC.opendb
+
+# NuGet
+*.nupkg
+*.snupkg
+packages/
+!packages/build/
+.nuget/
+
+# ASP.NET / MVC
+App_Data/Temp/
+App_Data/*.mdf
+App_Data/*.ldf
+
+# IIS Express
+.vs/config/applicationhost.config
+
+# Publish profiles and deployment
+PublishProfiles/
+*.publishsettings
+
+# Local configuration and secrets
+appsettings.Development.json
+appsettings.Local.json
+.env
+.env.*
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.old
+*.log
+
+# Operating system
+Thumbs.db
+.DS_Store
+Desktop.ini
+
+# Node.js (if applicable)
+node_modules/
+
+# Coverage and test results
+TestResults/
+coverage/
+
+# ReSharper
+_ReSharper*/
+*.[Rr]e[Ss]harper

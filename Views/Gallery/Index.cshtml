@@ -1,0 +1,441 @@
+@model GalleryViewModel
+@{
+    var parts = Model.Path.Split('/', StringSplitOptions.RemoveEmptyEntries);
+    var currentPath = "";
+}
+
+<style>
+    .g-breadcrumb {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+        font-size: .95rem;
+    }
+
+        .g-breadcrumb a {
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: #e9edf7;
+            color: #2b57c7;
+            text-decoration: none;
+        }
+
+            .g-breadcrumb a:hover {
+                background: #dbe3f6;
+                text-decoration: none;
+            }
+
+        .g-breadcrumb .g-current {
+            padding: 4px 10px;
+            font-weight: 600;
+        }
+
+    .g-sep {
+        color: #9aa3ad;
+    }
+
+    .g-summary {
+        margin: 0 0 24px;
+        color: #6b7480;
+        font-size: .9rem;
+    }
+
+    .g-title {
+        margin: 28px 0 12px;
+        font-size: 1rem;
+        font-weight: 600;
+        color: #3b434b;
+    }
+
+    .g-folders {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 12px;
+    }
+
+    .g-folder {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 16px;
+        background: #fff;
+        border: 1px solid #e1e5ea;
+        border-radius: 10px;
+        color: #222;
+        text-decoration: none;
+        overflow: hidden;
+    }
+
+        .g-folder svg {
+            flex: none;
+            color: #e0a526;
+        }
+
+        .g-folder span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .g-folder:hover {
+            border-color: #2b57c7;
+            text-decoration: none;
+        }
+
+    .g-images {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 14px;
+    }
+
+    .g-tile {
+        position: relative;
+        display: block;
+        aspect-ratio: 4 / 3;
+        overflow: hidden;
+        border-radius: 10px;
+        background: #e3e6ea;
+    }
+
+        .g-tile img, .g-viewer img {
+            pointer-events: none;
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+
+        .g-tile img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+    .g-caption {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 22px 12px 10px;
+        background: linear-gradient(transparent, rgba(0, 0, 0, .7));
+        color: #fff;
+        font-size: .82rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        opacity: 0;
+    }
+
+    .g-tile:hover .g-caption, .g-tile:focus-visible .g-caption {
+        opacity: 1;
+    }
+
+    .g-tile:focus-visible, .g-folder:focus-visible {
+        outline: 3px solid #2b57c7;
+        outline-offset: 2px;
+    }
+
+    @@media (prefers-reduced-motion: no-preference) {
+        .g-tile img {
+            transition: transform .25s ease;
+        }
+
+        .g-tile:hover img {
+            transform: scale(1.05);
+        }
+
+        .g-caption {
+            transition: opacity .2s ease;
+        }
+    }
+
+    .g-empty, .g-error {
+        padding: 28px;
+        border-radius: 10px;
+        text-align: center;
+    }
+
+    .g-empty {
+        background: #fff;
+        border: 1px dashed #c9cfd6;
+        color: #6b7480;
+    }
+
+    .g-error {
+        background: #fdecec;
+        color: #8f1d1d;
+    }
+
+    .g-pager {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 14px;
+        margin-top: 32px;
+    }
+
+        .g-pager a {
+            padding: 8px 18px;
+            border-radius: 8px;
+            background: #2b57c7;
+            color: #fff;
+            text-decoration: none;
+        }
+
+            .g-pager a:hover {
+                background: #2349a8;
+                text-decoration: none;
+            }
+
+        .g-pager span {
+            color: #6b7480;
+            font-size: .9rem;
+        }
+
+    /* Viewer */
+    .g-viewer {
+        position: fixed;
+        inset: 0;
+        z-index: 50;
+        background: rgba(8, 10, 12, .94);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .g-viewer[hidden] {
+            display: none;
+        }
+
+        .g-viewer img {
+            max-width: 92vw;
+            max-height: 82vh;
+            object-fit: contain;
+        }
+
+    .g-viewer-bar {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        padding: 12px 18px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #e8ebee;
+    }
+
+    .g-viewer-name {
+        flex: 1;
+        font-weight: 600;
+    }
+
+    .g-btn {
+        background: #2a3036;
+        color: #e8ebee;
+        border: 1px solid #3a4148;
+        border-radius: 6px;
+        padding: 6px 14px;
+        font: inherit;
+        font-size: .88rem;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+        .g-btn:hover {
+            background: #343b42;
+            text-decoration: none;
+        }
+
+    .g-viewer-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: transparent;
+        border: 0;
+        color: #e8ebee;
+        font-size: 3rem;
+        cursor: pointer;
+        padding: 12px 18px;
+    }
+
+    .g-prev {
+        left: 4px;
+    }
+
+    .g-next {
+        right: 4px;
+    }
+
+    @@media print {
+        .g-images, .g-viewer {
+            display: none !important;
+        }
+    }
+
+    @@media (max-width: 560px) {
+        .g-images {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .g-folders {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<nav class="g-breadcrumb" aria-label="Ruta">
+    @if (parts.Length == 0)
+    {
+        <span class="g-current">Inicio</span>
+    }
+    else
+    {
+        <a asp-action="Index" asp-route-path="">Inicio</a>
+        @for (var i = 0; i < parts.Length; i++)
+        {
+            currentPath += (currentPath == "" ? "" : "/") + parts[i];
+            <span class="g-sep">/</span>
+            if (i == parts.Length - 1)
+            {
+                <span class="g-current">@parts[i]</span>
+            }
+            else
+            {
+                <a asp-action="Index" asp-route-path="@currentPath">@parts[i]</a>
+            }
+        }
+    }
+</nav>
+
+@if (Model.Error != null)
+{
+    <p class="g-error">@Model.Error</p>
+}
+else if (Model.Folders.Count == 0 && Model.Images.Count == 0)
+{
+    <p class="g-empty">Esta carpeta está vacía.</p>
+}
+else
+{
+    <p class="g-summary">
+        @Model.Folders.Count @(Model.Folders.Count == 1 ? "carpeta" : "carpetas"),
+        @Model.Images.Count @(Model.Images.Count == 1 ? "imagen" : "imágenes") en esta página
+    </p>
+}
+
+@if (Model.Folders.Count > 0)
+{
+    <h2 class="g-title">Carpetas</h2>
+    <div class="g-folders">
+        @foreach (var folder in Model.Folders)
+        {
+            var folderPath = Model.Path == "" ? folder : Model.Path + "/" + folder;
+            <a class="g-folder" asp-action="Index" asp-route-path="@folderPath">
+                <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true">
+                    <path fill="currentColor" d="M10 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-8l-2-2z" />
+                </svg>
+                <span>@folder</span>
+            </a>
+        }
+    </div>
+}
+
+@if (Model.Images.Count > 0)
+{
+    <h2 class="g-title">Imágenes</h2>
+    <div class="g-images">
+        @for (var i = 0; i < Model.Images.Count; i++)
+        {
+            var number = Model.StartIndex + i + 1;
+            var displayName = $"fototrampa{number}";
+            var photoUrl = Url.Action("Photo", "Gallery", new { path = Model.Path, n = number });
+
+            <a class="g-tile" href="@photoUrl" data-name="@displayName">
+                <img src="@photoUrl" alt="@displayName" loading="lazy" draggable="false" />
+                <span class="g-caption">@displayName</span>
+            </a>
+        }
+    </div>
+
+    <div id="viewer" class="g-viewer" hidden role="dialog" aria-modal="true" aria-label="Visor de imagen">
+        <div class="g-viewer-bar">
+            <span id="viewer-name" class="g-viewer-name"></span>
+            <button id="viewer-close" class="g-btn" type="button">Cerrar</button>
+        </div>
+        <button id="viewer-prev" class="g-viewer-nav g-prev" type="button" aria-label="Anterior">&#8249;</button>
+        <img id="viewer-img" alt="" draggable="false" />
+        <button id="viewer-next" class="g-viewer-nav g-next" type="button" aria-label="Siguiente">&#8250;</button>
+    </div>
+
+    <script>
+        (function () {
+            var tiles = Array.prototype.slice.call(document.querySelectorAll('.g-tile'));
+            var viewer = document.getElementById('viewer');
+            var img = document.getElementById('viewer-img');
+            var nameEl = document.getElementById('viewer-name');
+            var current = 0;
+
+            function show(i) {
+                current = (i + tiles.length) % tiles.length;
+                var tile = tiles[current];
+                img.src = tile.getAttribute('href');
+                img.alt = tile.dataset.name;
+                nameEl.textContent = tile.dataset.name;
+            }
+
+            function openViewer(i) {
+                show(i);
+                viewer.hidden = false;
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeViewer() {
+                viewer.hidden = true;
+                img.removeAttribute('src');
+                document.body.style.overflow = '';
+            }
+
+            tiles.forEach(function (tile, i) {
+                tile.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    openViewer(i);
+                });
+            });
+
+            document.getElementById('viewer-close').addEventListener('click', closeViewer);
+            document.getElementById('viewer-prev').addEventListener('click', function () { show(current - 1); });
+            document.getElementById('viewer-next').addEventListener('click', function () { show(current + 1); });
+            viewer.addEventListener('click', function (e) { if (e.target === viewer) closeViewer(); });
+
+            document.addEventListener('keydown', function (e) {
+                if (viewer.hidden) return;
+                if (e.key === 'Escape') closeViewer();
+                else if (e.key === 'ArrowLeft') show(current - 1);
+                else if (e.key === 'ArrowRight') show(current + 1);
+            });
+
+            // No context menu on images and viewer
+            document.addEventListener('contextmenu', function (e) {
+                if (e.target.closest('.g-tile, .g-viewer')) e.preventDefault();
+            });
+        })();
+    </script>
+}
+
+@if (Model.TotalPages > 1)
+{
+    <nav class="g-pager" aria-label="Páginas">
+        @if (Model.Page > 1)
+        {
+            <a asp-action="Index" asp-route-path="@Model.Path" asp-route-page="@(Model.Page - 1)">Anterior</a>
+        }
+        <span>Página @Model.Page de @Model.TotalPages</span>
+        @if (Model.Page < Model.TotalPages)
+        {
+            <a asp-action="Index" asp-route-path="@Model.Path" asp-route-page="@(Model.Page + 1)">Siguiente</a>
+        }
+    </nav>
+}
