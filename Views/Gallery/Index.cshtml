@@ -2,101 +2,323 @@
 @{
     var parts = Model.Path.Split('/', StringSplitOptions.RemoveEmptyEntries);
     var currentPath = "";
+    var currentFolder = parts.Length == 0 ? "Galería de fotografías" : parts[^1];
 }
 
 <style>
+    .gallery-page {
+        --gallery-accent: #3157d5;
+        --gallery-accent-dark: #2445b5;
+        --gallery-text: #202938;
+        --gallery-muted: #6b7280;
+        --gallery-border: #e5e9f0;
+        color: var(--gallery-text);
+        padding: clamp(16px, 3vw, 30px);
+        background: #f7f8fc;
+        border-radius: 20px;
+        min-height: 65vh;
+    }
+
+    .g-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 22px;
+    }
+
+    .g-heading {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        min-width: 0;
+    }
+
+    .g-heading-icon {
+        display: grid;
+        place-items: center;
+        flex: 0 0 52px;
+        width: 52px;
+        height: 52px;
+        color: var(--gallery-accent);
+        background: #e9edff;
+        border-radius: 16px;
+    }
+
+        .g-heading-icon svg {
+            width: 27px;
+            height: 27px;
+        }
+
+    .g-eyebrow {
+        margin: 0 0 4px;
+        color: var(--gallery-muted);
+        font-size: .78rem;
+        font-weight: 700;
+        letter-spacing: .09em;
+        text-transform: uppercase;
+    }
+
+    .g-main-title {
+        margin: 0;
+        font-size: clamp(1.45rem, 3vw, 2rem);
+        line-height: 1.2;
+        font-weight: 750;
+        letter-spacing: -.035em;
+        overflow-wrap: anywhere;
+    }
+
+    .g-subtitle {
+        margin: 7px 0 0;
+        color: var(--gallery-muted);
+        font-size: .94rem;
+    }
+
+    .g-stat {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex: 0 0 auto;
+        padding: 10px 14px;
+        border: 1px solid var(--gallery-border);
+        border-radius: 12px;
+        background: #fff;
+        color: #485365;
+        font-size: .88rem;
+        white-space: nowrap;
+    }
+
+        .g-stat svg {
+            width: 18px;
+            height: 18px;
+            color: var(--gallery-accent);
+        }
+
     .g-breadcrumb {
         display: flex;
         flex-wrap: wrap;
         align-items: center;
-        gap: 8px;
-        margin-bottom: 8px;
-        font-size: .95rem;
+        gap: 7px;
+        padding: 11px 13px;
+        margin-bottom: 22px;
+        background: #fff;
+        border: 1px solid var(--gallery-border);
+        border-radius: 12px;
+        font-size: .9rem;
     }
 
         .g-breadcrumb a {
-            padding: 4px 10px;
-            border-radius: 999px;
-            background: #e9edf7;
-            color: #2b57c7;
+            display: inline-flex;
+            align-items: center;
+            padding: 5px 9px;
+            border-radius: 7px;
+            color: var(--gallery-accent);
             text-decoration: none;
+            transition: background .15s ease;
         }
 
             .g-breadcrumb a:hover {
-                background: #dbe3f6;
+                background: #eef1ff;
                 text-decoration: none;
             }
 
         .g-breadcrumb .g-current {
-            padding: 4px 10px;
-            font-weight: 600;
+            padding: 5px 9px;
+            color: var(--gallery-text);
+            font-weight: 650;
+            overflow-wrap: anywhere;
         }
 
     .g-sep {
-        color: #9aa3ad;
+        color: #b1b8c5;
     }
 
-    .g-summary {
-        margin: 0 0 24px;
-        color: #6b7480;
-        font-size: .9rem;
+    .g-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        margin: 0 0 20px;
+    }
+
+    .g-search {
+        position: relative;
+        width: min(100%, 360px);
+    }
+
+        .g-search svg {
+            position: absolute;
+            top: 50%;
+            left: 13px;
+            width: 18px;
+            height: 18px;
+            color: #8a93a3;
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+
+        .g-search input {
+            width: 100%;
+            min-height: 43px;
+            padding: 10px 14px 10px 40px;
+            border: 1px solid #dfe4ed;
+            border-radius: 12px;
+            outline: none;
+            background: #fff;
+            color: var(--gallery-text);
+            font: inherit;
+            font-size: .92rem;
+            box-sizing: border-box;
+            transition: border-color .15s ease, box-shadow .15s ease;
+        }
+
+            .g-search input:focus {
+                border-color: var(--gallery-accent);
+                box-shadow: 0 0 0 3px rgba(49, 87, 213, .12);
+            }
+
+    .g-toolbar-note {
+        color: var(--gallery-muted);
+        font-size: .86rem;
+    }
+
+    .g-section {
+        margin-top: 26px;
+    }
+
+        .g-section:first-child {
+            margin-top: 0;
+        }
+
+    .g-section-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin: 0 0 13px;
     }
 
     .g-title {
-        margin: 28px 0 12px;
-        font-size: 1rem;
-        font-weight: 600;
-        color: #3b434b;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        margin: 0;
+        font-size: 1.05rem;
+        font-weight: 750;
+        letter-spacing: -.015em;
+    }
+
+        .g-title svg {
+            width: 20px;
+            height: 20px;
+            color: var(--gallery-accent);
+        }
+
+    .g-count {
+        color: var(--gallery-muted);
+        font-size: .83rem;
     }
 
     .g-folders {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr));
         gap: 12px;
     }
 
     .g-folder {
         display: flex;
         align-items: center;
-        gap: 12px;
-        padding: 14px 16px;
+        gap: 13px;
+        min-width: 0;
+        padding: 15px;
+        border: 1px solid var(--gallery-border);
+        border-radius: 14px;
         background: #fff;
-        border: 1px solid #e1e5ea;
-        border-radius: 10px;
-        color: #222;
+        color: var(--gallery-text);
         text-decoration: none;
-        overflow: hidden;
+        box-shadow: 0 2px 5px rgba(25, 38, 65, .025);
+        transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
     }
 
-        .g-folder svg {
-            flex: none;
-            color: #e0a526;
-        }
-
-        .g-folder span {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
         .g-folder:hover {
-            border-color: #2b57c7;
+            transform: translateY(-2px);
+            border-color: #bdc9ff;
+            box-shadow: 0 8px 20px rgba(35, 55, 110, .08);
             text-decoration: none;
         }
 
+    .g-folder-icon {
+        display: grid;
+        place-items: center;
+        flex: 0 0 43px;
+        width: 43px;
+        height: 43px;
+        color: #c48a18;
+        background: #fff5d9;
+        border-radius: 12px;
+    }
+
+        .g-folder-icon svg {
+            width: 24px;
+            height: 24px;
+        }
+
+    .g-folder-copy {
+        min-width: 0;
+        flex: 1;
+    }
+
+    .g-folder-name {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-weight: 650;
+    }
+
+    .g-folder-hint {
+        display: block;
+        margin-top: 4px;
+        color: var(--gallery-muted);
+        font-size: .78rem;
+    }
+
+    .g-folder-arrow {
+        width: 18px;
+        height: 18px;
+        color: #a5adba;
+        flex: 0 0 auto;
+    }
+
     .g-images {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-        gap: 14px;
+        grid-template-columns: repeat(auto-fill, minmax(min(100%, 205px), 1fr));
+        gap: 17px;
     }
+
+    .g-image-card {
+        min-width: 0;
+        overflow: hidden;
+        border: 1px solid var(--gallery-border);
+        border-radius: 15px;
+        background: #fff;
+        box-shadow: 0 3px 9px rgba(25, 38, 65, .035);
+        transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+
+        .g-image-card:hover {
+            transform: translateY(-3px);
+            border-color: #d5dcf2;
+            box-shadow: 0 12px 25px rgba(25, 38, 65, .11);
+        }
 
     .g-tile {
         position: relative;
         display: block;
         aspect-ratio: 4 / 3;
         overflow: hidden;
-        border-radius: 10px;
-        background: #e3e6ea;
+        background: #e8ebf2;
+        cursor: zoom-in;
     }
 
         .g-tile img, .g-viewer img {
@@ -110,60 +332,97 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            transition: transform .28s ease;
+        }
+
+    .g-image-card:hover .g-tile img {
+        transform: scale(1.045);
+    }
+
+    .g-image-badge {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 8px;
+        border: 1px solid rgba(255,255,255,.35);
+        border-radius: 7px;
+        background: rgba(17, 24, 39, .62);
+        color: #fff;
+        font-size: .72rem;
+        font-weight: 600;
+        backdrop-filter: blur(6px);
+    }
+
+        .g-image-badge svg {
+            width: 13px;
+            height: 13px;
+        }
+
+    .g-image-info {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 11px 12px;
+    }
+
+    .g-image-file-icon {
+        display: grid;
+        place-items: center;
+        flex: 0 0 31px;
+        width: 31px;
+        height: 31px;
+        color: #6679d9;
+        background: #eef0ff;
+        border-radius: 9px;
+    }
+
+        .g-image-file-icon svg {
+            width: 17px;
+            height: 17px;
         }
 
     .g-caption {
-        position: absolute;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        padding: 22px 12px 10px;
-        background: linear-gradient(transparent, rgba(0, 0, 0, .7));
-        color: #fff;
-        font-size: .82rem;
+        min-width: 0;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-        opacity: 0;
-    }
-
-    .g-tile:hover .g-caption, .g-tile:focus-visible .g-caption {
-        opacity: 1;
-    }
-
-    .g-tile:focus-visible, .g-folder:focus-visible {
-        outline: 3px solid #2b57c7;
-        outline-offset: 2px;
-    }
-
-    @@media (prefers-reduced-motion: no-preference) {
-        .g-tile img {
-            transition: transform .25s ease;
-        }
-
-        .g-tile:hover img {
-            transform: scale(1.05);
-        }
-
-        .g-caption {
-            transition: opacity .2s ease;
-        }
+        font-size: .86rem;
+        font-weight: 650;
     }
 
     .g-empty, .g-error {
-        padding: 28px;
-        border-radius: 10px;
+        padding: clamp(28px, 5vw, 48px) 20px;
+        border-radius: 16px;
         text-align: center;
     }
 
     .g-empty {
+        border: 1px dashed #cbd3e0;
         background: #fff;
-        border: 1px dashed #c9cfd6;
-        color: #6b7480;
+        color: var(--gallery-muted);
     }
 
+        .g-empty svg {
+            display: block;
+            width: 42px;
+            height: 42px;
+            margin: 0 auto 12px;
+            color: #9ba6bb;
+        }
+
+        .g-empty strong {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--gallery-text);
+            font-size: 1rem;
+        }
+
     .g-error {
-        background: #fdecec;
+        border: 1px solid #f4caca;
+        background: #fff0f0;
         color: #8f1d1d;
     }
 
@@ -171,37 +430,55 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        gap: 14px;
-        margin-top: 32px;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid var(--gallery-border);
     }
 
         .g-pager a {
-            padding: 8px 18px;
-            border-radius: 8px;
-            background: #2b57c7;
-            color: #fff;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 10px 15px;
+            border: 1px solid #dce2ed;
+            border-radius: 10px;
+            background: #fff;
+            color: var(--gallery-text);
+            font-size: .9rem;
+            font-weight: 650;
             text-decoration: none;
+            transition: background .15s ease, border-color .15s ease;
         }
 
             .g-pager a:hover {
-                background: #2349a8;
+                border-color: #b9c6ff;
+                background: #f0f3ff;
                 text-decoration: none;
             }
 
         .g-pager span {
-            color: #6b7480;
+            color: var(--gallery-muted);
             font-size: .9rem;
         }
 
-    /* Viewer */
+        .g-pager .g-page-current {
+            color: var(--gallery-text);
+            font-weight: 700;
+        }
+
+    /* Full-screen image viewer */
     .g-viewer {
         position: fixed;
         inset: 0;
-        z-index: 50;
-        background: rgba(8, 10, 12, .94);
+        z-index: 1050;
         display: flex;
         align-items: center;
         justify-content: center;
+        padding: 65px 70px 35px;
+        background: rgba(8, 12, 22, .96);
+        box-sizing: border-box;
     }
 
         .g-viewer[hidden] {
@@ -209,9 +486,11 @@
         }
 
         .g-viewer img {
-            max-width: 92vw;
-            max-height: 82vh;
+            max-width: 100%;
+            max-height: 100%;
             object-fit: contain;
+            border-radius: 4px;
+            box-shadow: 0 10px 40px rgba(0,0,0,.25);
         }
 
     .g-viewer-bar {
@@ -219,155 +498,426 @@
         top: 0;
         left: 0;
         right: 0;
-        padding: 12px 18px;
         display: flex;
         align-items: center;
-        gap: 10px;
-        color: #e8ebee;
+        gap: 14px;
+        min-height: 60px;
+        padding: 10px 18px;
+        border-bottom: 1px solid rgba(255,255,255,.1);
+        color: #f3f4f6;
+        box-sizing: border-box;
     }
+
+    .g-viewer-brand {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        color: #aebcff;
+    }
+
+        .g-viewer-brand svg {
+            width: 21px;
+            height: 21px;
+        }
 
     .g-viewer-name {
         flex: 1;
-        font-weight: 600;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: .94rem;
+        font-weight: 650;
+    }
+
+    .g-viewer-counter {
+        color: #b9c0ce;
+        font-size: .85rem;
+        white-space: nowrap;
     }
 
     .g-btn {
-        background: #2a3036;
-        color: #e8ebee;
-        border: 1px solid #3a4148;
-        border-radius: 6px;
-        padding: 6px 14px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        padding: 8px 12px;
+        border: 1px solid rgba(255,255,255,.18);
+        border-radius: 9px;
+        background: rgba(255,255,255,.08);
+        color: #f3f4f6;
         font: inherit;
-        font-size: .88rem;
+        font-size: .86rem;
         cursor: pointer;
         text-decoration: none;
+        transition: background .15s ease;
     }
 
         .g-btn:hover {
-            background: #343b42;
-            text-decoration: none;
+            background: rgba(255,255,255,.16);
+        }
+
+        .g-btn svg {
+            width: 17px;
+            height: 17px;
         }
 
     .g-viewer-nav {
         position: absolute;
         top: 50%;
-        transform: translateY(-50%);
-        background: transparent;
-        border: 0;
-        color: #e8ebee;
-        font-size: 3rem;
+        display: grid;
+        place-items: center;
+        width: 48px;
+        height: 48px;
+        border: 1px solid rgba(255,255,255,.15);
+        border-radius: 50%;
+        background: rgba(255,255,255,.09);
+        color: #fff;
+        font-size: 2rem;
+        line-height: 1;
         cursor: pointer;
-        padding: 12px 18px;
+        transform: translateY(-50%);
+        transition: background .15s ease, transform .15s ease;
     }
 
+        .g-viewer-nav:hover {
+            background: rgba(255,255,255,.2);
+            transform: translateY(-50%) scale(1.05);
+        }
+
     .g-prev {
-        left: 4px;
+        left: 16px;
     }
 
     .g-next {
-        right: 4px;
+        right: 16px;
     }
 
-    @@media print {
-        .g-images, .g-viewer {
-            display: none !important;
+    .g-no-results {
+        display: none;
+        margin-top: 12px;
+        padding: 18px;
+        text-align: center;
+        color: var(--gallery-muted);
+        background: #fff;
+        border: 1px dashed var(--gallery-border);
+        border-radius: 12px;
+    }
+
+    .g-folder:focus-visible, .g-tile:focus-visible, .g-btn:focus-visible, .g-viewer-nav:focus-visible, .g-pager a:focus-visible {
+        outline: 3px solid #8297ff;
+        outline-offset: 3px;
+    }
+
+    @@media (prefers-reduced-motion: reduce) {
+        .g-folder, .g-image-card, .g-tile img, .g-btn, .g-viewer-nav {
+            transition: none;
         }
     }
 
-    @@media (max-width: 560px) {
+    @@media (max-width: 640px) {
+        .gallery-page {
+            padding: 15px;
+            border-radius: 14px;
+        }
+
+        .g-header {
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .g-stat {
+            align-self: flex-start;
+        }
+
+        .g-toolbar {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .g-search {
+            width: 100%;
+        }
+
         .g-images {
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 10px;
         }
 
         .g-folders {
             grid-template-columns: 1fr;
         }
+
+        .g-image-info {
+            padding: 9px;
+            gap: 7px;
+        }
+
+        .g-image-file-icon {
+            width: 27px;
+            height: 27px;
+            flex-basis: 27px;
+        }
+
+        .g-caption {
+            font-size: .78rem;
+        }
+
+        .g-viewer {
+            padding: 70px 12px 25px;
+        }
+
+        .g-viewer-nav {
+            width: 40px;
+            height: 40px;
+            background: rgba(10,15,25,.65);
+        }
+
+        .g-prev {
+            left: 8px;
+        }
+
+        .g-next {
+            right: 8px;
+        }
+
+        .g-viewer-bar {
+            gap: 8px;
+            padding: 9px 10px;
+        }
+
+        .g-viewer-brand {
+            display: none;
+        }
+
+        .g-viewer-counter {
+            font-size: .78rem;
+        }
+    }
+
+    @@media (max-width: 360px) {
+        .g-images {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media print {
+        .g-toolbar, .g-viewer, .g-pager {
+            display: none !important;
+        }
     }
 </style>
 
-<nav class="g-breadcrumb" aria-label="Ruta">
-    @if (parts.Length == 0)
+<div class="gallery-page">
+    <header class="g-header">
+        <div class="g-heading">
+            <div class="g-heading-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                    <rect x="3" y="3" width="18" height="18" rx="4" stroke="currentColor" stroke-width="1.8" />
+                    <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor" />
+                    <path d="m4 17 5-5 3.5 3.5 2.5-2.5L20 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </div>
+            <div>
+                <p class="g-eyebrow">Explorador de archivos K'aaxil ba'aliche'</p>
+                <h1 class="g-main-title">@currentFolder</h1>
+                <p class="g-subtitle">Explora las fotografias subidas por los usuarios.</p>
+            </div>
+        </div>
+        @if (Model.Error == null)
+        {
+            <div class="g-stat" aria-label="Contenido de esta página">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <rect x="3" y="4" width="18" height="16" rx="3" stroke="currentColor" stroke-width="1.7" />
+                    <path d="m4 16 5-5 4 4 3-3 4 4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                <strong>@Model.Images.Count</strong> @(Model.Images.Count == 1 ? "imagen" : "imágenes")
+            </div>
+        }
+    </header>
+
+    <nav class="g-breadcrumb" aria-label="Ruta de navegación">
+        @if (parts.Length == 0)
+        {
+            <span class="g-current">Inicio</span>
+        }
+        else
+        {
+            <a asp-action="Index" asp-route-path="">Inicio</a>
+            @for (var i = 0; i < parts.Length; i++)
+            {
+                currentPath += (currentPath == "" ? "" : "/") + parts[i];
+                <span class="g-sep" aria-hidden="true">/</span>
+                if (i == parts.Length - 1)
+                {
+                    <span class="g-current" aria-current="page">@parts[i]</span>
+                }
+                else
+                {
+                    <a asp-action="Index" asp-route-path="@currentPath">@parts[i]</a>
+                }
+            }
+        }
+    </nav>
+
+    @if (Model.Error != null)
     {
-        <span class="g-current">Inicio</span>
+        <div class="g-error" role="alert">@Model.Error</div>
+    }
+    else if (Model.Folders.Count == 0 && Model.Images.Count == 0)
+    {
+        <div class="g-empty">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <rect x="3" y="4" width="18" height="16" rx="3" stroke="currentColor" stroke-width="1.5" />
+                <circle cx="8.5" cy="9" r="1.5" stroke="currentColor" stroke-width="1.5" />
+                <path d="m4 17 5-5 4 4 3-3 4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <strong>Esta carpeta está vacía</strong>
+            <span>No hay carpetas ni imágenes para mostrar en esta ubicación.</span>
+        </div>
     }
     else
     {
-        <a asp-action="Index" asp-route-path="">Inicio</a>
-        @for (var i = 0; i < parts.Length; i++)
+        <div class="g-toolbar">
+            <label class="g-search">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <circle cx="10.8" cy="10.8" r="6.8" stroke="currentColor" stroke-width="1.8" />
+                    <path d="m16 16 4.2 4.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                </svg>
+                <input id="gallery-search" type="search" placeholder="Filtrar por nombre..." autocomplete="off" aria-label="Filtrar carpetas e imágenes por nombre" />
+            </label>
+            <span class="g-toolbar-note">@(Model.Folders.Count) @(Model.Folders.Count == 1 ? "carpeta" : "carpetas") · @(Model.Images.Count) @(Model.Images.Count == 1 ? "imagen" : "imágenes") en esta página</span>
+        </div>
+
+        @if (Model.Folders.Count > 0)
         {
-            currentPath += (currentPath == "" ? "" : "/") + parts[i];
-            <span class="g-sep">/</span>
-            if (i == parts.Length - 1)
-            {
-                <span class="g-current">@parts[i]</span>
-            }
-            else
-            {
-                <a asp-action="Index" asp-route-path="@currentPath">@parts[i]</a>
-            }
+            <section class="g-section" aria-labelledby="folders-title">
+                <div class="g-section-head">
+                    <h2 id="folders-title" class="g-title">
+                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" />
+                        </svg>
+                        Carpetas
+                    </h2>
+                    <span class="g-count">@Model.Folders.Count elementos</span>
+                </div>
+                <div class="g-folders" id="gallery-folders">
+                    @foreach (var folder in Model.Folders)
+                    {
+                        var folderPath = Model.Path == "" ? folder : Model.Path + "/" + folder;
+                        <a class="g-folder" data-filter-name="@folder" asp-action="Index" asp-route-path="@folderPath">
+                            <span class="g-folder-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M10 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-8l-2-2z" />
+                                </svg>
+                            </span>
+                            <span class="g-folder-copy">
+                                <span class="g-folder-name">@folder</span>
+                                <span class="g-folder-hint">Abrir carpeta</span>
+                            </span>
+                            <svg class="g-folder-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                <path d="m9 18 6-6-6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </a>
+                    }
+                </div>
+            </section>
+        }
+
+        @if (Model.Images.Count > 0)
+        {
+            <section class="g-section" aria-labelledby="images-title">
+                <div class="g-section-head">
+                    <h2 id="images-title" class="g-title">
+                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <rect x="3" y="3" width="18" height="18" rx="4" stroke="currentColor" stroke-width="1.7" />
+                            <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor" />
+                            <path d="m4 17 5-5 3.5 3.5 2.5-2.5L20 18" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        Fotografías
+                    </h2>
+                    <span class="g-count">@Model.Images.Count imágenes visibles</span>
+                </div>
+
+                <div class="g-images" id="gallery-images">
+                    @for (var i = 0; i < Model.Images.Count; i++)
+                    {
+                        var number = Model.StartIndex + i + 1;
+                        var displayName = $"fototrampa{number}";
+                        var photoUrl = Url.Action("Photo", "Gallery", new { path = Model.Path, n = number });
+
+                        <article class="g-image-card" data-filter-name="@displayName">
+                            <a class="g-tile" href="@photoUrl" data-name="@displayName" aria-label="Ver imagen @displayName">
+                                <img src="@photoUrl" alt="@displayName" loading="lazy" decoding="async" draggable="false" />
+                                <span class="g-image-badge">
+                                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                        <path d="M2.5 12s3.4-6 9.5-6 9.5 6 9.5 6-3.4 6-9.5 6-9.5-6-9.5-6Z" stroke="currentColor" stroke-width="1.7" />
+                                        <circle cx="12" cy="12" r="2.5" stroke="currentColor" stroke-width="1.7" />
+                                    </svg>
+                                    Ver foto
+                                </span>
+                            </a>
+                            <div class="g-image-info">
+                                <span class="g-image-file-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none">
+                                        <rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" stroke-width="1.7" />
+                                        <circle cx="8.5" cy="8.5" r="1.5" stroke="currentColor" stroke-width="1.5" />
+                                        <path d="m4 17 5-5 3.5 3.5 2.5-2.5L20 18" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                </span>
+                                <span class="g-caption" title="@displayName">@displayName</span>
+                            </div>
+                        </article>
+                    }
+                </div>
+                <div id="gallery-no-results" class="g-no-results">No se encontraron carpetas o imágenes con ese nombre.</div>
+            </section>
+        }
+
+        @if (Model.TotalPages > 1)
+        {
+            <nav class="g-pager" aria-label="Paginación de imágenes">
+                @if (Model.Page > 1)
+                {
+                    <a asp-action="Index" asp-route-path="@Model.Path" asp-route-page="@(Model.Page - 1)">
+                        <span aria-hidden="true">←</span> Anterior
+                    </a>
+                }
+                <span>Página <span class="g-page-current">@Model.Page</span> de @Model.TotalPages</span>
+                @if (Model.Page < Model.TotalPages)
+                {
+                    <a asp-action="Index" asp-route-path="@Model.Path" asp-route-page="@(Model.Page + 1)">
+                        Siguiente <span aria-hidden="true">→</span>
+                    </a>
+                }
+            </nav>
         }
     }
-</nav>
+</div>
 
-@if (Model.Error != null)
+@if (Model.Error == null && Model.Images.Count > 0)
 {
-    <p class="g-error">@Model.Error</p>
-}
-else if (Model.Folders.Count == 0 && Model.Images.Count == 0)
-{
-    <p class="g-empty">Esta carpeta está vacía.</p>
-}
-else
-{
-    <p class="g-summary">
-        @Model.Folders.Count @(Model.Folders.Count == 1 ? "carpeta" : "carpetas"),
-        @Model.Images.Count @(Model.Images.Count == 1 ? "imagen" : "imágenes") en esta página
-    </p>
-}
-
-@if (Model.Folders.Count > 0)
-{
-    <h2 class="g-title">Carpetas</h2>
-    <div class="g-folders">
-        @foreach (var folder in Model.Folders)
-        {
-            var folderPath = Model.Path == "" ? folder : Model.Path + "/" + folder;
-            <a class="g-folder" asp-action="Index" asp-route-path="@folderPath">
-                <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true">
-                    <path fill="currentColor" d="M10 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-8l-2-2z" />
-                </svg>
-                <span>@folder</span>
-            </a>
-        }
-    </div>
-}
-
-@if (Model.Images.Count > 0)
-{
-    <h2 class="g-title">Imágenes</h2>
-    <div class="g-images">
-        @for (var i = 0; i < Model.Images.Count; i++)
-        {
-            var number = Model.StartIndex + i + 1;
-            var displayName = $"fototrampa{number}";
-            var photoUrl = Url.Action("Photo", "Gallery", new { path = Model.Path, n = number });
-
-            <a class="g-tile" href="@photoUrl" data-name="@displayName">
-                <img src="@photoUrl" alt="@displayName" loading="lazy" draggable="false" />
-                <span class="g-caption">@displayName</span>
-            </a>
-        }
-    </div>
-
     <div id="viewer" class="g-viewer" hidden role="dialog" aria-modal="true" aria-label="Visor de imagen">
         <div class="g-viewer-bar">
+            <span class="g-viewer-brand" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                    <rect x="3" y="3" width="18" height="18" rx="4" stroke="currentColor" stroke-width="1.7" />
+                    <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor" />
+                    <path d="m4 17 5-5 3.5 3.5 2.5-2.5L20 18" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </span>
             <span id="viewer-name" class="g-viewer-name"></span>
-            <button id="viewer-close" class="g-btn" type="button">Cerrar</button>
+            <span id="viewer-counter" class="g-viewer-counter" aria-live="polite"></span>
+            <button id="viewer-close" class="g-btn" type="button" aria-label="Cerrar visor">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="m6 6 12 12M18 6 6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                </svg>
+                Cerrar
+            </button>
         </div>
-        <button id="viewer-prev" class="g-viewer-nav g-prev" type="button" aria-label="Anterior">&#8249;</button>
+        <button id="viewer-prev" class="g-viewer-nav g-prev" type="button" aria-label="Imagen anterior">&#8249;</button>
         <img id="viewer-img" alt="" draggable="false" />
-        <button id="viewer-next" class="g-viewer-nav g-next" type="button" aria-label="Siguiente">&#8250;</button>
+        <button id="viewer-next" class="g-viewer-nav g-next" type="button" aria-label="Imagen siguiente">&#8250;</button>
     </div>
 
     <script>
@@ -376,26 +926,33 @@ else
             var viewer = document.getElementById('viewer');
             var img = document.getElementById('viewer-img');
             var nameEl = document.getElementById('viewer-name');
+            var counterEl = document.getElementById('viewer-counter');
+            var closeButton = document.getElementById('viewer-close');
             var current = 0;
+            var lastFocused = null;
 
             function show(i) {
                 current = (i + tiles.length) % tiles.length;
                 var tile = tiles[current];
                 img.src = tile.getAttribute('href');
-                img.alt = tile.dataset.name;
-                nameEl.textContent = tile.dataset.name;
+                img.alt = tile.dataset.name || '';
+                nameEl.textContent = tile.dataset.name || '';
+                counterEl.textContent = (current + 1) + ' de ' + tiles.length;
             }
 
             function openViewer(i) {
+                lastFocused = document.activeElement;
                 show(i);
                 viewer.hidden = false;
                 document.body.style.overflow = 'hidden';
+                closeButton.focus();
             }
 
             function closeViewer() {
                 viewer.hidden = true;
                 img.removeAttribute('src');
                 document.body.style.overflow = '';
+                if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus();
             }
 
             tiles.forEach(function (tile, i) {
@@ -405,10 +962,12 @@ else
                 });
             });
 
-            document.getElementById('viewer-close').addEventListener('click', closeViewer);
+            closeButton.addEventListener('click', closeViewer);
             document.getElementById('viewer-prev').addEventListener('click', function () { show(current - 1); });
             document.getElementById('viewer-next').addEventListener('click', function () { show(current + 1); });
-            viewer.addEventListener('click', function (e) { if (e.target === viewer) closeViewer(); });
+            viewer.addEventListener('click', function (e) {
+                if (e.target === viewer) closeViewer();
+            });
 
             document.addEventListener('keydown', function (e) {
                 if (viewer.hidden) return;
@@ -417,25 +976,30 @@ else
                 else if (e.key === 'ArrowRight') show(current + 1);
             });
 
-            // No context menu on images and viewer
+            // Filtrado de las carpetas e imágenes que ya están cargadas en esta página.
+            var search = document.getElementById('gallery-search');
+            var noResults = document.getElementById('gallery-no-results');
+
+            if (search) {
+                search.addEventListener('input', function () {
+                    var term = search.value.trim().toLocaleLowerCase();
+                    var visible = 0;
+
+                    document.querySelectorAll('[data-filter-name]').forEach(function (item) {
+                        var name = (item.getAttribute('data-filter-name') || '').toLocaleLowerCase();
+                        var matches = name.indexOf(term) !== -1;
+                        item.style.display = matches ? '' : 'none';
+                        if (matches) visible++;
+                    });
+
+                    if (noResults) noResults.style.display = term && visible === 0 ? 'block' : 'none';
+                });
+            }
+
+            // Evita el menú contextual sobre las imágenes, como en la versión original.
             document.addEventListener('contextmenu', function (e) {
                 if (e.target.closest('.g-tile, .g-viewer')) e.preventDefault();
             });
         })();
     </script>
-}
-
-@if (Model.TotalPages > 1)
-{
-    <nav class="g-pager" aria-label="Páginas">
-        @if (Model.Page > 1)
-        {
-            <a asp-action="Index" asp-route-path="@Model.Path" asp-route-page="@(Model.Page - 1)">Anterior</a>
-        }
-        <span>Página @Model.Page de @Model.TotalPages</span>
-        @if (Model.Page < Model.TotalPages)
-        {
-            <a asp-action="Index" asp-route-path="@Model.Path" asp-route-page="@(Model.Page + 1)">Siguiente</a>
-        }
-    </nav>
 }

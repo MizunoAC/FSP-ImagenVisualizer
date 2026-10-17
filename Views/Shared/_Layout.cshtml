@@ -3,11 +3,26 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>FSP Images</title>
+    <title>K'aaxil ba'aliche'</title>
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
 <body>
-    <header><a asp-controller="Gallery" asp-action="Index" asp-route-path="">FSP Images</a></header>
-    <main>@RenderBody()</main>
+    <header class="site-header">
+        <a class="site-brand"
+           asp-controller="Gallery"
+           asp-action="Index"
+           asp-route-path="">
+
+            <img src="~/images/icon.png"
+                 alt="Logo K'aaxil ba'aliche'"
+                 class="site-logo" />
+
+            <span>K'aaxil ba'aliche'</span>
+        </a>
+    </header>
+
+    <main>
+        @RenderBody()
+    </main>
 </body>
 </html>

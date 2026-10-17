@@ -13,3 +13,46 @@ a:hover { text-decoration: underline; }
 .folder { padding: 14px; background: #fbf1da; color: #222; border-radius: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .pager { display: flex; gap: 16px; justify-content: center; margin-top: 24px; }
+.site-header {
+    padding: 14px 28px;
+    background: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.site-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    color: #234b36;
+    font-size: 1.35rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+    .site-brand:hover {
+        color: #34744d;
+        text-decoration: none;
+    }
+
+.site-logo {
+    width: 44px;
+    height: 44px;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+@media (max-width: 480px) {
+    .site-header {
+        padding: 12px 16px;
+    }
+
+    .site-brand {
+        gap: 9px;
+        font-size: 1.1rem;
+    }
+
+    .site-logo {
+        width: 36px;
+        height: 36px;
+    }
+}
