@@ -30,16 +30,6 @@
         <h1 class="l-title">Iniciar sesión</h1>
         <p class="l-subtitle">Accede para ver la galería.</p>
 
-        <div id="login-error" class="l-error" role="alert" aria-live="polite" hidden>
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-                <circle cx="12" cy="12" r="9" />
-                <path d="M12 8v5" />
-                <path d="M12 16h.01" />
-            </svg>
-            <span id="login-error-message"></span>
-        </div>
-
-       
         <div class="l-field">
             <label for="username">Usuario</label>
             <input id="username"
@@ -59,8 +49,17 @@
                    type="password"
                    autocomplete="current-password" />
         </div>
+        <div id="login-error" class="l-error" role="alert" aria-live="polite" hidden>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="9" />
+                <path d="M12 8v5" />
+                <path d="M12 16h.01" />
+            </svg>
+            <span id="login-error-message" style="text-align: center;"></span>
+        </div>
 
-        <button type="button"
+        <button id="login-button"
+                type="button"
                 class="l-submit"
                 onclick="Login()">
             Entrar

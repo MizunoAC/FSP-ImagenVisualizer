@@ -1,9 +1,11 @@
+using FSP_Images.Filter;
 using FSP_Images.Models;
 using FSP_Images.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FSP_Images.Controllers;
 
+[ServiceFilter(typeof(AuthenticationFilter))]
 public class GalleryController : Controller
 {
     private readonly ImageService _images;

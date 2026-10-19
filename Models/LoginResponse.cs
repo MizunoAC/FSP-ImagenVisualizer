@@ -9,11 +9,13 @@ public class LoginResponse
     public string? Message { get; set; }
 
     [JsonPropertyName("error")]
-    public bool? Error { get; set; }
+    public bool Error { get; set; }
 
     [JsonPropertyName("accessToken")]
     public string? AccessToken { get; set; }
 
     [JsonPropertyName("refreshToken")]
     public string? RefreshToken { get; set; }
+    [JsonIgnore]
+    public string SessionId { get; set; } = "";
 }

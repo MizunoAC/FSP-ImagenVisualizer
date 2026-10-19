@@ -26,6 +26,14 @@ public class AccountController(IAuthenticationService authenticationService) : C
             });
         }
 
+        Response.Cookies.Append("sid", result.SessionId, new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = Request.IsHttps,
+            SameSite = SameSiteMode.Lax,
+            MaxAge = TimeSpan.FromHours(8)
+        });
+
         return Ok(new
         {
             message = result.Message,

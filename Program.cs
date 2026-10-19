@@ -1,3 +1,4 @@
+using FSP_Images.Filter;
 using FSP_Images.Services;
 using FSP_Images.Services.Contracts;
 
@@ -9,6 +10,10 @@ builder.Services.AddHttpClient<IAuthenticationService, AuthenticationService>(cl
 {
     client.BaseAddress = new Uri(builder.Configuration["Backend:BaseUrl"]!);
 });
+builder.Services.AddScoped<AuthenticationFilter>();
+builder.Services.AddMemoryCache();
+builder.Services.AddSingleton<TokenSessionServices>();
+builder.Services.AddSingleton<JwtTokenService>();
 
 var app = builder.Build();
 

@@ -1,50 +1,61 @@
-﻿
-async function Login() {
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
-    const errorElement = document.getElementById("login-error");
+﻿const LOGIN_URL = "/Account/Login";
+const HOME_URL = "/Gallery/Index"; 
 
-    errorElement.hidden = true;
-    errorElement.textContent = "";
+function showError(message) {
+    document.getElementById("login-error-message").textContent = message;
+    document.getElementById("login-error").hidden = false;
+}
+
+function hideError() {
+    document.getElementById("login-error").hidden = true;
+}
+
+async function Login() {
+    const button = document.getElementById("login-button");
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value;
+
+    hideError();
+    button.disabled = true;
+    button.textContent = "Iniciando Sesion, Espere…";
+
+    let redirecting = false;
 
     try {
-        const response = await fetch("/Account/Login", {
+        const response = await fetch(LOGIN_URL, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "Accept": "application/json"
             },
-            body: JSON.stringify({
-                username: username,
-                password: password
-            })
+            body: JSON.stringify({ username: username, password: password })
         });
 
-        const contentType = response.headers.get("content-type") || "";
+        const isJson = (response.headers.get("content-type") || "").includes("application/json");
+        const result = isJson ? await response.json() : null;
 
-        if (!contentType.includes("application/json")) {
-            throw new Error("El servidor devolvió una respuesta inesperada.");
-        }
-
-        const result = await response.json();
-
-        if (!response.ok || result.error === true) {
-            errorElement.textContent =
-                result.message || "Error al iniciar sesión.";
-
-            errorElement.hidden = false;
+        if (!result) {
+            showError("El servidor devolvió una respuesta inesperada.");
             return;
         }
 
-        window.location.href = "/Home/Index";
+        if (!response.ok || result.error === true) {
+            showError(result.message || "No se pudo iniciar sesión.");
+            return;
+        }
 
+        redirecting = true;
+        window.location.href = HOME_URL;
     } catch (error) {
-        errorElement.textContent =
-            error.message === "Failed to fetch"
-                ? "No se pudo conectar con el servidor."
-                : error.message || "Ocurrió un error inesperado.";
+        console.error("Login error:", error);
 
-        errorElement.hidden = false;
-        console.error("Error en el login:", error);
+        showError(error instanceof TypeError
+            ? "No se pudo conectar con el servidor."
+            : "Ocurrió un error inesperado.");
+    } finally {
+        if (!redirecting) {
+            button.disabled = false;
+            button.textContent = "Entrar";
+        }
     }
 }
